@@ -57,9 +57,9 @@ plot(onMaS?MAS:na, "Fast SLOW", color.new(color.red,60))
 
 //Core Settings
 //Core EMA Length
-ema1 = input.int(9,"Config 4", inline = "strategy config", group = "Lvls For backtest")
-ema2 = input.int(2,"Config 4", inline = "strategy config", group = "Lvls For backtest")
-ema3 = input.int(3,"Config 6", inline = "strategy config", group = "Lvls For backtest")
+ema1 = input.int(21,"Config 9", inline = "strategy config", group = "Lvls For backtest")
+ema2 = input.int(6,"Config 2", inline = "strategy config", group = "Lvls For backtest")
+ema3 = input.int(1,"Config 3", inline = "strategy config", group = "Lvls For backtest")
 
 //Core MA Method with fib
 fibLine = ta.ema((math.abs(close - close[1])),ema1)* fibMultification
@@ -98,10 +98,10 @@ else if (newSup[2] > close[1] and low[1] > close)
 	myTrendx :=  x
 	trendColor := color.new(color.red,90)
 
-upTrend =    plot(myTrend, "Up Trend",  myTrendx > myTrend? color.new(color.green, 70):na , style = plot.style_line)
-downTrend =  plot(myTrend, "Down Trend", myTrendx < myTrend? color.new(color.red, 70):na,   style = plot.style_line)
-upTrend2 =    plot(myTrend2, "Up Trend",  srLinesOn? myTrendx > myTrend2? color.new(color.green, 70):na :na, style = plot.style_line)
-downTrend2 =  plot(myTrend2, "Down Trend", srLinesOn? myTrendx < myTrend2? color.new(color.red, 70):na :na,   style = plot.style_line)
+upTrend =    plot(myTrend, "Up Trend",  myTrendx > myTrend? color.new(color.green, 50):na , style = plot.style_line)
+downTrend =  plot(myTrend, "Down Trend", myTrendx < myTrend? color.new(color.red, 50):na,   style = plot.style_line)
+upTrend2 =    plot(myTrend2, "Up Trend",  srLinesOn? myTrendx > myTrend2? color.new(color.green, 50):na :na, style = plot.style_line)
+downTrend2 =  plot(myTrend2, "Down Trend", srLinesOn? myTrendx < myTrend2? color.new(color.red, 50):na :na,   style = plot.style_line)
 bodyMiddle = plot(barstate.isfirst ? na : myTrendx, "Body Middle",style = plot.style_linebr, color = color.new( color.black, 100))
 
 float rLine = 0

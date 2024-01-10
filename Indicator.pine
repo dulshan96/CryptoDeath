@@ -9,18 +9,18 @@ indicator("MY TREND", "MT", true, max_lines_count=500, max_labels_count=50, max_
 fibMultification = input.float(2.618, "Fibonacci Mutification", inline = "Main Line") 
 commonSource = input.source(close,"| Src", inline = "Main Line")
 //ON OFF
-buySellSignal = input.bool(false,"B & S Signal |",inline = "Settings")
-rsiColorsOnOff = input.bool(true,"RSI Colors |",inline = "Settings")
+buySellSignal = input.bool(true,"B & S Signal |",inline = "Settings")
+swingTrendOnOff = input.bool(false,"Swing Trend |",inline = "Settings")
 onExtream = input(true, 'Extream Zones |', inline = "Settings")
 onRSIZone = input(true, 'RSI Zones |', inline = "Settings")
 srLinesOn = input(true, 'SR Lines', inline = "Settings")
 
 
-mtfLevelD  = input.bool(true, "D" , inline = "MTF Lvls" , group = "MTF Lvls")
-mtfLevelW  = input.bool(true, "W" , inline = "MTF Lvls", group = "MTF Lvls")
-mtfLevelM  = input.bool(true, "M" , inline = "MTF Lvls", group = "MTF Lvls")
-mtfLevel4h  = input.bool(true, "4H" , inline = "MTF Lvls", group = "MTF Lvls")
-mtfLevel1h  = input.bool(true, "1H" , inline = "MTF Lvls", group = "MTF Lvls")
+mtfLevelD  = input.bool(false, "D" , inline = "MTF Lvls" , group = "MTF Lvls")
+mtfLevelW  = input.bool(false, "W" , inline = "MTF Lvls", group = "MTF Lvls")
+mtfLevelM  = input.bool(false, "M" , inline = "MTF Lvls", group = "MTF Lvls")
+mtfLevel4h  = input.bool(false, "4H" , inline = "MTF Lvls", group = "MTF Lvls")
+// mtfLevel1h  = input.bool(true, "1H" , inline = "MTF Lvls", group = "MTF Lvls")
 
 greenCandle = (open < close)
 redCandle = (open > close)
@@ -98,17 +98,24 @@ else if (newSup[2] > close[1] and low[1] > close)
 	myTrendx :=  x
 	trendColor := color.new(color.red,90)
 
-upTrend =    plot(myTrend, "Up Trend",  myTrendx > myTrend? color.new(color.green, 100):na , style = plot.style_linebr)
-downTrend =  plot(myTrend, "Down Trend", myTrendx < myTrend? color.new(color.red, 100):na,   style = plot.style_linebr)
-upTrend2 =    plot(myTrend2, "Up Trend",  srLinesOn? myTrendx > myTrend2? color.new(color.green, 40):na :na, style = plot.style_linebr)
-downTrend2 =  plot(myTrend2, "Down Trend", srLinesOn? myTrendx < myTrend2? color.new(color.red, 40):na :na,   style = plot.style_linebr)
-bodyMiddle = plot(barstate.isfirst ? na : myTrendx, "Body Middle",style = plot.style_linebr, color = color.black)
+upTrend =    plot(myTrend, "Up Trend",  myTrendx > myTrend? color.new(color.green, 70):na , style = plot.style_line)
+downTrend =  plot(myTrend, "Down Trend", myTrendx < myTrend? color.new(color.red, 70):na,   style = plot.style_line)
+upTrend2 =    plot(myTrend2, "Up Trend",  srLinesOn? myTrendx > myTrend2? color.new(color.green, 70):na :na, style = plot.style_line)
+downTrend2 =  plot(myTrend2, "Down Trend", srLinesOn? myTrendx < myTrend2? color.new(color.red, 70):na :na,   style = plot.style_line)
+bodyMiddle = plot(barstate.isfirst ? na : myTrendx, "Body Middle",style = plot.style_linebr, color = color.new( color.black, 100))
+
+float rLine = 0
+float sLine = 0 
 
 if(myTrend > myTrend2)
 	trendColor := color.new(color.red,90)
+	rLine := myTrend
+	sLine := myTrend2
 
 else if (myTrend < myTrend2)
 	trendColor := color.new(color.green,90)
+	rLine := myTrend2
+	sLine := myTrend
 
 fill(bodyMiddle, upTrend,  trendColor, fillgaps = false)
 fill(bodyMiddle, downTrend,trendColor, fillgaps = false)
@@ -116,56 +123,58 @@ fill(bodyMiddle, downTrend,trendColor, fillgaps = false)
 
 // Plotting lines
 var line_M = line.new(na, na, na, na, width=1, color=color.blue)
-var line_R = line.new(na, na, na, na, width=1, color=color.green)
-var line_S = line.new(na, na, na, na, width=1, color=color.red)
+var line_R = line.new(na, na, na, na, width=1, color=  color.new(color.red,0))
+var line_S = line.new(na, na, na, na, width=1, color= color.new(color.green,0))
+
+
 //Monthly
 var line_MM = line.new(na, na, na, na, width=1, color=color.blue)
-var line_RM = line.new(na, na, na, na, width=1, color=color.green)
-var line_SM = line.new(na, na, na, na, width=1, color=color.red)
+var line_RM = line.new(na, na, na, na, width=1, color=color.red)
+var line_SM = line.new(na, na, na, na, width=1, color=color.green)
 
 //Weekly
 var line_MW = line.new(na, na, na, na, width=1, color=color.blue)
-var line_RW = line.new(na, na, na, na, width=1, color=color.green)
-var line_SW = line.new(na, na, na, na, width=1, color=color.red)
+var line_RW = line.new(na, na, na, na, width=1, color=color.red)
+var line_SW = line.new(na, na, na, na, width=1, color=color.green)
 
 //Daily
 var line_MD = line.new(na, na, na, na, width=1, color=color.blue)
-var line_RD = line.new(na, na, na, na, width=1, color=color.green)
-var line_SD = line.new(na, na, na, na, width=1, color=color.red)
+var line_RD = line.new(na, na, na, na, width=1, color=color.red)
+var line_SD = line.new(na, na, na, na, width=1, color=color.green)
 
 //4H
 var line_M4H = line.new(na, na, na, na, width=1, color=color.blue)
-var line_R4H = line.new(na, na, na, na, width=1, color=color.green)
-var line_S4H = line.new(na, na, na, na, width=1, color=color.red)
+var line_R4H = line.new(na, na, na, na, width=1, color=color.red)
+var line_S4H = line.new(na, na, na, na, width=1, color=color.green)
 
 
 // Update the lines with extended values
 line.set_xy1(line_M, bar_index + 10, myTrendx)
-line.set_xy2(line_M, bar_index - 3, myTrendx)
+line.set_xy2(line_M, bar_index - 2, myTrendx)
 
-line.set_xy1(line_R, bar_index + 10, myTrend2)
-line.set_xy2(line_R, bar_index - 3, myTrend2)
+line.set_xy1(line_R, bar_index + 10, rLine)
+line.set_xy2(line_R, bar_index - 2, rLine)
 
-line.set_xy1(line_S, bar_index + 10, myTrend)
-line.set_xy2(line_S, bar_index - 3, myTrend)
+line.set_xy1(line_S, bar_index + 10, sLine)
+line.set_xy2(line_S, bar_index - 2, sLine)
 
 
 // Request data from the higher time frame
 MM = request.security(syminfo.tickerid, "M", myTrendx)
-MR = request.security(syminfo.tickerid, "M", myTrend2)
-MS = request.security(syminfo.tickerid, "M", myTrend)
+MR = request.security(syminfo.tickerid, "M", rLine)
+MS = request.security(syminfo.tickerid, "M", sLine)
 
 WM = request.security(syminfo.tickerid, "W", myTrendx)
-WR = request.security(syminfo.tickerid, "W", myTrend2)
-WS = request.security(syminfo.tickerid, "W", myTrend)
+WR = request.security(syminfo.tickerid, "W", rLine)
+WS = request.security(syminfo.tickerid, "W", sLine)
 
 DM = request.security(syminfo.tickerid, "D", myTrendx)
-DR = request.security(syminfo.tickerid, "D", myTrend2)
-DS = request.security(syminfo.tickerid, "D", myTrend)
+DR = request.security(syminfo.tickerid, "D", rLine)
+DS = request.security(syminfo.tickerid, "D", sLine)
 
 h4M = request.security(syminfo.tickerid, "240", myTrendx)
-h4R = request.security(syminfo.tickerid, "240", myTrend2)
-h4S = request.security(syminfo.tickerid, "240", myTrend)
+h4R = request.security(syminfo.tickerid, "240", rLine)
+h4S = request.security(syminfo.tickerid, "240", sLine)
 
 //MTF multiplier
 mtfMultiplierM = timeframe.isminutes and timeframe.multiplier  < (1*60*24*28)
@@ -217,29 +226,29 @@ line.set_xy2(mtfLevel4h?mtfMultiplier4H? line_R4H:na:na, bar_index - 17, h4R)
 
 // Add labels to the lines
 //all
-label label_M = label.new(bar_index + 13, myTrendx, "M :" + str.tostring(myTrendx), textcolor =color.blue, style=label.style_none, size=size.small)
-label label_S = label.new(bar_index + 13, myTrend, "R :" + str.tostring(myTrend), textcolor=color.red, style=label.style_none, size=size.small)
-label label_R = label.new(bar_index + 13, myTrend2, "S :" + str.tostring(myTrend2), textcolor=color.green, style=label.style_none, size=size.small)
+label label_M = label.new(bar_index + 13, myTrendx, "(M) " + str.tostring(myTrendx), textcolor =color.blue, style=label.style_none, size=size.small)
+label label_S = label.new(bar_index + 13, sLine, "(S) " + str.tostring(sLine), textcolor=color.green, style=label.style_none, size=size.small)
+label label_R = label.new(bar_index + 13, rLine, "(R) " + str.tostring(rLine), textcolor=color.red, style=label.style_none, size=size.small)
 
 //Monthly
-label label_MM = label.new(bar_index + 24, MM, mtfLevelW?mtfMultiplierW? "MM :" + str.tostring(MM):na:na, textcolor=color.blue, style=label.style_none, size=size.small)
-label label_MS = label.new(bar_index + 24, MS, mtfLevelW?mtfMultiplierW? "MR :" + str.tostring(MS):na:na, textcolor=color.red, style=label.style_none, size=size.small)
-label label_MR = label.new(bar_index + 24, MR, mtfLevelW?mtfMultiplierW? "MS :" + str.tostring(MR):na:na, textcolor=color.green, style=label.style_none, size=size.small)
+label label_MM = label.new(bar_index + 24, MM, mtfLevelW?mtfMultiplierW? "(MM) " + str.tostring(MM):na:na, textcolor=color.blue, style=label.style_none, size=size.small)
+label label_MS = label.new(bar_index + 24, MS, mtfLevelW?mtfMultiplierW? "(MS) " + str.tostring(MS):na:na, textcolor=color.green, style=label.style_none, size=size.small)
+label label_MR = label.new(bar_index + 24, MR, mtfLevelW?mtfMultiplierW? "(MR) " + str.tostring(MR):na:na, textcolor=color.red, style=label.style_none, size=size.small)
 
 //Weekly
-label label_WM = label.new(bar_index + 24, WM, mtfLevelW?mtfMultiplierW? "WM :" + str.tostring(WM):na:na, textcolor=color.blue, style=label.style_none, size=size.small)
-label label_WS = label.new(bar_index + 24, WS, mtfLevelW?mtfMultiplierW? "WR :" + str.tostring(WS):na:na, textcolor=color.red, style=label.style_none, size=size.small)
-label label_WR = label.new(bar_index + 24, WR, mtfLevelW?mtfMultiplierW? "WS :" + str.tostring(WR):na:na, textcolor=color.green, style=label.style_none, size=size.small)
+label label_WM = label.new(bar_index + 24, WM, mtfLevelW?mtfMultiplierW? "(WM) " + str.tostring(WM):na:na, textcolor=color.blue, style=label.style_none, size=size.small)
+label label_WS = label.new(bar_index + 24, WS, mtfLevelW?mtfMultiplierW? "(WS) " + str.tostring(WS):na:na, textcolor=color.green, style=label.style_none, size=size.small)
+label label_WR = label.new(bar_index + 24, WR, mtfLevelW?mtfMultiplierW? "(WR) " + str.tostring(WR):na:na, textcolor=color.red, style=label.style_none, size=size.small)
 
 //daily
-label label_DM = label.new(bar_index + 24, DM, mtfLevelD?mtfMultiplierD? "DM :" + str.tostring(DM):na:na, textcolor=color.blue, style=label.style_none, size=size.small)
-label label_DS = label.new(bar_index + 24, DS, mtfLevelD?mtfMultiplierD? "DR :" + str.tostring(DS):na:na, textcolor=color.red, style=label.style_none, size=size.small)
-label label_DR = label.new(bar_index + 24, DR, mtfLevelD?mtfMultiplierD? "DS :" + str.tostring(DR):na:na, textcolor=color.green, style=label.style_none, size=size.small)
+label label_DM = label.new(bar_index + 24, DM, mtfLevelD?mtfMultiplierD? "(DM) " + str.tostring(DM):na:na, textcolor=color.blue, style=label.style_none, size=size.small)
+label label_DS = label.new(bar_index + 24, DS, mtfLevelD?mtfMultiplierD? "(DS) " + str.tostring(DS):na:na, textcolor=color.green, style=label.style_none, size=size.small)
+label label_DR = label.new(bar_index + 24, DR, mtfLevelD?mtfMultiplierD? "(DR) " + str.tostring(DR):na:na, textcolor=color.red, style=label.style_none, size=size.small)
 
 //4h
-label label_h4M = label.new(bar_index + 24, h4M, mtfLevel4h?mtfMultiplier4H? "4h M :" + str.tostring(h4M):na:na, textcolor=color.blue, style=label.style_none, size=size.small)
-label label_h4S = label.new(bar_index + 24, h4S, mtfLevel4h?mtfMultiplier4H? "4h R :" + str.tostring(h4S):na:na, textcolor=color.red, style=label.style_none, size=size.small)
-label label_h4R = label.new(bar_index + 24, h4R, mtfLevel4h?mtfMultiplier4H? "4h S :" + str.tostring(h4R):na:na, textcolor=color.green, style=label.style_none, size=size.small)
+label label_h4M = label.new(bar_index + 24, h4M, mtfLevel4h?mtfMultiplier4H? "(4h M) " + str.tostring(h4M):na:na, textcolor=color.blue, style=label.style_none, size=size.small)
+label label_h4S = label.new(bar_index + 24, h4S, mtfLevel4h?mtfMultiplier4H? "(4h S) " + str.tostring(h4S):na:na, textcolor=color.green, style=label.style_none, size=size.small)
+label label_h4R = label.new(bar_index + 24, h4R, mtfLevel4h?mtfMultiplier4H? "(4h R) " + str.tostring(h4R):na:na, textcolor=color.red, style=label.style_none, size=size.small)
 
 
 // Delete previous labels
@@ -279,8 +288,8 @@ rsi = down == 0 ? 100 : up == 0 ? 0 : 100 - (100 / (1 + up / down))
 rsiCon = rsi
 
 // Divergence
-lookbackRight = 1
-lookbackLeft = 7
+lookbackRight = 5
+lookbackLeft = 5
 rangeUpper = 60
 rangeLower = 5
 bearColor = color.orange
@@ -528,63 +537,6 @@ plotshape(
 	 )
 
 
-// lengthSignal = input.int(20, minval=1) //86
-// maType = input.string("EMA", "Basis MA Type", options = ["SMA", "EMA", "SMMA (RMA)", "WMA", "VWMA"])
-// Signalsrc = input(hlc3, title="Source")
-// mult = input.float(2.0, minval=0.001, maxval=50, title="StdDev")
-
-// basis = ma(Signalsrc, lengthSignal, maType)
-
-// signalMA = ta.ema(Signalsrc, 1)
-// //plot(signalMA)
-
-// dev5 = 1.382 * ta.stdev(Signalsrc, lengthSignal)
-// dev6 = 1.618 * ta.stdev(Signalsrc, lengthSignal)
-// dev10 = 3 * ta.stdev(Signalsrc, lengthSignal)
-
-
-
-// upper5 = basis + dev5
-// lower5 = basis - dev5
-// upper6 = basis + dev6
-// lower6 = basis - dev6
-// upper10 = basis + dev10
-// lower10 = basis - dev10
-
-
-// buycross = signalMA < lower5 and close < lower6 and close[1] > lower10[1] and redCandle[1] and greenCandle
-// sellcross = signalMA > upper5 and close > upper6 and close[1] < upper10[1] and greenCandle[1] and redCandle
-
-// plotshape(sellcross , "sell",shape.labeldown,location.abovebar ,color.red, text="Sell", textcolor= color.white )
-// plotshape(buycross , "Buy",shape.labelup,location.belowbar ,color.green, text="Buy", textcolor= color.white )
-
-
-// plotshape(
-// 	 buySellSignal ? buycross : na,
-// 	//  offset=-lookbackRight,
-// 	 title="Buy Signal",
-// 	 text="Buy",
-// 	 style=shape.labelup,
-// 	 location=location.belowbar,
-// 	 color=color.new(color.green,45),
-// 	 textcolor=textColor,
-//      size = size.small
-// 	 )
-// plotshape(
-// 	 buySellSignal ? sell2 : na,
-// 	//  offset=-lookbackRight,
-// 	 title="Buy Signal",
-// 	 text="sell",
-// 	 style=shape.labeldown,
-// 	 location=location.abovebar,
-// 	 color=color.new(color.red,45),
-// 	 textcolor=textColor,
-//      size = size.small
-// 	 )
-// alertcondition(buycross, title='Buy Alert', message="Buy Now")
-// alertcondition(sellcross, title='Sell Alert', message='Short Now')
-
-
 //engulfing
 smaLength = input.int(14)
 sma14 = ta.sma(close, smaLength) 
@@ -601,7 +553,7 @@ plotshape(bearEng, "Bear Engulf", shape.labeldown, location.abovebar, color.new(
 
 
 // new Bands
-length = input.int(85, minval=1) //86
+length = input.int(86, minval=1) //86
 maType = input.string("EMA", "Basis MA Type", options = ["SMA", "EMA", "SMMA (RMA)", "WMA", "VWMA"])
 src = input(hlc3, title="Source")
 mult = input.float(2.0, minval=0.001, maxval=50, title="StdDev")
@@ -611,109 +563,41 @@ basis = ma(src, length, maType)
 signalMA = ta.ema(src, 1)
 // plot(signalMA)
 
-dev1 = 0.382 * ta.stdev(src, length)
-dev2 = 0.618 * ta.stdev(src, length)
-dev3 = 0.786 * ta.stdev(src, length)
-dev4 = 1 * ta.stdev(src, length)
+// dev1 = 0.382 * ta.stdev(src, length)
+// dev2 = 0.618 * ta.stdev(src, length)
+// dev3 = 0.786 * ta.stdev(src, length)
+// dev4 = 1 * ta.stdev(src, length)
 dev5 = 1.382 * ta.stdev(src, length)
 dev6 = 1.618 * ta.stdev(src, length)
 dev7 = 2 * ta.stdev(src, length)
-dev8 = 2.382 * ta.stdev(src, length)
-dev9 = 2.618 * ta.stdev(src, length)
+// dev8 = 2.382 * ta.stdev(src, length)
+// dev9 = 2.618 * ta.stdev(src, length)
 dev10 = 3 * ta.stdev(src, length)
-// dev11 = 3.382 * ta.stdev(src, length)
-// dev12 = 3.618 * ta.stdev(src, length)
-// dev13 = 4 * ta.stdev(src, length)
-// dev14 = 4.382 * ta.stdev(src, length)
 
 
 
-upper1 = basis + dev1
-lower1 = basis - dev1
-upper2 = basis + dev2
-lower2 = basis - dev2
-upper3 = basis + dev3
-lower3 = basis - dev3
-upper4 = basis + dev4
-lower4 = basis - dev4
+// upper1 = basis + dev1
+// lower1 = basis - dev1
+// upper2 = basis + dev2
+// lower2 = basis - dev2
+// upper3 = basis + dev3
+// lower3 = basis - dev3
+// upper4 = basis + dev4
+// lower4 = basis - dev4
 upper5 = basis + dev5
 lower5 = basis - dev5
 upper6 = basis + dev6
 lower6 = basis - dev6
 upper7 = basis + dev7
 lower7 = basis - dev7
-upper8 = basis + dev8
-lower8 = basis - dev8
-upper9 = basis + dev9
-lower9 = basis - dev9
+// upper8 = basis + dev8
+// lower8 = basis - dev8
+// upper9 = basis + dev9
+// lower9 = basis - dev9
 upper10 = basis + dev10
 lower10 = basis - dev10
-// upper11 = basis + dev11
-// lower11 = basis - dev11
-// upper12 = basis + dev12
-// lower12 = basis - dev12
-// upper13 = basis + dev13
-// lower13 = basis - dev13
-// upper14 = basis + dev14
-// lower14 = basis - dev14
 
 offset = input.int(0, "Offset", minval = -500, maxval = 500)
-// plot(basis, "Basis", color=#FF6D00, offset = offset)
-// p1 = plot(upper1, "Upper", color=#2962FF, offset = offset)
-// p2 = plot(lower1, "Lower", color=#2962FF, offset = offset)
-// fill(p1, p2, title = "Background", color=color.rgb(33, 150, 243, 100))
-
-// p12 = plot(upper2, "Upper", color=#2962FF, offset = offset)
-// p22 = plot(lower2, "Lower", color=#2962FF, offset = offset)
-// fill(p12, p22, title = "Background", color=color.rgb(33, 150, 243, 100))
-
-// p13 = plot(upper3, "Upper", color=#29ffff, offset = offset)
-// p23 = plot(lower3, "Lower", color=#29ffff, offset = offset)
-// fill(p13, p23, title = "Background", color=color.rgb(33, 149, 243, 100))
-
-// p14 = plot(upper4, "Upper", color=#2962FF, offset = offset)
-// p24 = plot(lower4, "Lower", color=#2962FF, offset = offset)
-// fill(p14, p24, title = "Background", color=color.rgb(33, 150, 243, 100))
-
-// p15 = plot(upper5, "Upper", color=#ff29fb, offset = offset)
-// p25 = plot(lower5, "Lower", color=#ff29f4, offset = offset)
-// fill(p15, p25, title = "Background", color=color.rgb(33, 150, 243, 100))
-
-// p16 = plot(upper6, "Upper", color=#fffb29, offset = offset)
-// p26 = plot(lower6, "Lower", color=#fffb29, offset = offset)
-// fill(p16, p26, title = "Background", color=color.rgb(33, 150, 243, 100))
-
-// p17 = plot(upper7, "Upper", color=#2962FF, offset = offset)
-// p27 = plot(lower7, "Lower", color=#2962FF, offset = offset)
-// fill(p17, p27, title = "Background", color=color.rgb(33, 150, 243, 100))
-
-// p18 = plot(upper8, "Upper", color=#2962FF, offset = offset)
-// p28 = plot(lower8, "Lower", color=#2962FF, offset = offset)
-// fill(p18, p28, title = "Background", color=color.rgb(33, 150, 243, 100))
-
-// p19 = plot(upper9, "Upper", color=#ff2929, offset = offset)
-// p29 = plot(lower9, "Lower", color=#ff3029, offset = offset)
-// fill(p19, p29, title = "Background", color=color.rgb(33, 150, 243, 100))
-
-// p110 = plot(upper10, "Upper", color=#ffd829, offset = offset)
-// p210 = plot(lower10, "Lower", color=#ffd829, offset = offset)
-// fill(p110, p210, title = "Background", color=color.rgb(33, 149, 243, 100))
-
-// p111 = plot(upper11, "Upper", color=#2962FF, offset = offset)
-// p211 = plot(lower11, "Lower", color=#2962FF, offset = offset)
-// fill(p111, p211, title = "Background", color=color.rgb(33, 150, 243, 95))
-
-// p112 = plot(upper12, "Upper", color=#2962FF, offset = offset)
-// p212 = plot(lower12, "Lower", color=#2962FF, offset = offset)
-// fill(p112, p212, title = "Background", color=color.rgb(33, 150, 243, 95))
-
-// p113 = plot(upper13, "Upper", color=#2962FF, offset = offset)
-// p213 = plot(lower13, "Lower", color=#2962FF, offset = offset)
-// fill(p113, p213, title = "Background", color=color.rgb(33, 150, 243, 95))
-
-// p114 = plot(upper14, "Upper", color=#2962FF, offset = offset)
-// p214 = plot(lower14, "Lower", color=#2962FF, offset = offset)
-// fill(p114, p214, title = "Background", color=color.rgb(33, 150, 243, 95))
 
 //Core BackEnd
 var float  xbb = 0
@@ -748,11 +632,11 @@ else if (newSupbb[2] > close[1] and close[1] > close and newSup[2] > close[1])
 
 	trendColorbb := color.new(color.red,90)
 
-plot(myTrendbb, color = color.new(color.black,50))
-plot(myTrendbb, color = color.new(color.black,50))
+plot(swingTrendOnOff?myTrendbb : na, color = color.new(#5905df, 0))
+plot(swingTrendOnOff?myTrend2bb: na, color = color.new(#5905df, 0))
 
-upTrendbb =    plot(myTrendxbb, "Up Trend",  myTrendxbb > myTrendbb? color.new(#02ff0a, 40):na , style = plot.style_linebr, linewidth = 1)
-downTrendbb =  plot(myTrendxbb, "Down Trend", myTrendxbb < myTrendbb? color.new(color.red, 40):na,   style = plot.style_linebr, linewidth = 1)
+upTrendbb =    plot(swingTrendOnOff?myTrendxbb:na, "Up Trend",  myTrendxbb > myTrendbb? color.new(color.green, 0):na , style = plot.style_linebr, linewidth = 1)
+downTrendbb =  plot(swingTrendOnOff?myTrendxbb: na, "Down Trend", myTrendxbb < myTrendbb? color.new(color.red, 0):na,   style = plot.style_linebr, linewidth = 1)
 // upTrend2 =    plot(myTrend2, "Up Trend",  srLinesOn? myTrendx > myTrend2? color.new(color.green, 40):na :na, style = plot.style_linebr)
 // downTrend2 =  plot(myTrend2, "Down Trend", srLinesOn? myTrendx < myTrend2? color.new(color.red, 40):na :na,   style = plot.style_linebr)
 // bodyMiddle = plot(barstate.isfirst ? na : myTrendx, "Body Middle",style = plot.style_linebr, color = color.black)
@@ -766,5 +650,5 @@ downTrendbb =  plot(myTrendxbb, "Down Trend", myTrendxbb < myTrendbb? color.new(
 // fill(bodyMiddle, upTrend,  trendColor, fillgaps = false)
 // fill(bodyMiddle, downTrend,trendColor, fillgaps = false)
 
-plotshape(signalMA > upper5 and close > upper6 and close[1] < upper10[1] and greenCandle[1] and redCandle and c70 < high , "sell",shape.labeldown,location.abovebar ,color.red)
-plotshape(signalMA < lower5 and close < lower6 and close[1] > lower10[1] and redCandle[1] and greenCandle and c30 > low , "Buy",shape.labelup,location.belowbar ,color.green)
+plotshape(buySellSignal?signalMA > upper5 and close > upper6 and close[1] < upper10[1] and greenCandle[1] and redCandle and c70 < high: na , "sell",shape.triangledown,location.abovebar ,color.red, size = size.normal ,text = "Seller", textcolor = color.red)
+plotshape(buySellSignal?signalMA < lower5 and close < lower6 and close[1] > lower10[1] and redCandle[1] and greenCandle and c30 > low: na , "Buy",shape.triangleup,location.belowbar ,color.green, size = size.normal ,text = "Buyer" , textcolor = color.green)

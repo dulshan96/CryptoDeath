@@ -89,13 +89,13 @@ var float myTrend2 = na
 var float myTrendx = na
 trendColor = color.new(color.white,0)
 
-if(newRes[2] < close[1] and high[1] < high)
+if(newRes[2] < close[1] and high[1] < close)
     myTrend :=  newSup
 	myTrend2 :=  newRes
 	myTrendx :=  x
 	trendColor := color.new(color.green,90) 
 
-else if (newSup[2] > close[1] and low[1] > low) 
+else if (newSup[2] > close[1] and low[1] > close) 
     myTrend :=  newRes
 	myTrend2 :=  newSup
 	myTrendx :=  x
@@ -519,10 +519,10 @@ plotshape(
 	 signalS,
 	 title="Regular Bullish Label",
 	 text=" S ",
-	 style=shape.labelup,
+	 style=shape.triangleup,
 	 location=location.belowbar,
 	 color=color.new(color.green,60),
-	 textcolor=textColor
+	 textcolor=color.green
 	 )
 
 
@@ -533,10 +533,10 @@ plotshape(
 	 signalR,
 	 title="Regular Bullish Label",
 	 text=" R ",
-	 style=shape.labeldown,
+	 style=shape.triangledown,
 	 location=location.abovebar,
 	 color=color.new(color.red,60),
-	 textcolor=textColor
+	 textcolor=color.red
 	 )
 
 
@@ -550,8 +550,8 @@ bearEng = greenCandle[1] and low[1] > close and high[1] > sma14 and low > sma14 
 
 
 
-plotshape(bulishEng, "Bulish Engulf", shape.labelup, location.belowbar, color.new(color.green, 60), 0, "S", color.white,true)
-plotshape(bearEng, "Bear Engulf", shape.labeldown, location.abovebar, color.new(color.red, 60), 0, "R", color.white,true)
+plotshape(bulishEng, "Bulish Engulf", shape.labelup, location.belowbar, color.new(color.green, 0), 0, "B Eng", color.white,true)
+plotshape(bearEng, "Bear Engulf", shape.labeldown, location.abovebar, color.new(color.red, 0), 0, "R Eng", color.white,true)
 
 
 

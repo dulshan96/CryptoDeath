@@ -66,6 +66,9 @@ fibLine = ta.ema((math.abs(close - close[1])),ema1)* fibMultification
 fibLine2 = ta.ema((fibLine),ema2) //k
 sup = math.abs(ta.ema((close - fibLine2),ema3))
 res = math.abs(ta.ema((close + fibLine2),ema3))
+// sup = math.abs(close - fibLine2)
+// res = math.abs(close + fibLine2)
+
 
 //Core BackEnd
 var float  x = 0
@@ -86,13 +89,13 @@ var float myTrend2 = na
 var float myTrendx = na
 trendColor = color.new(color.white,0)
 
-if(newRes[2] < close[1] and high[1] < close)
+if(newRes[2] < close[1] and high[1] < high)
     myTrend :=  newSup
 	myTrend2 :=  newRes
 	myTrendx :=  x
 	trendColor := color.new(color.green,90) 
 
-else if (newSup[2] > close[1] and low[1] > close) 
+else if (newSup[2] > close[1] and low[1] > low) 
     myTrend :=  newRes
 	myTrend2 :=  newSup
 	myTrendx :=  x
